@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/othon-hugo/jwt/example"
+	"github.com/othon-hugo/go-jwt/example"
 )
 
 func main() {

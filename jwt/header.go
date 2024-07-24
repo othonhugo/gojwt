@@ -4,8 +4,8 @@ import (
 	"hash"
 	"strings"
 
-	"github.com/othon-hugo/go-jwt/crypto"
-	"github.com/othon-hugo/go-jwt/encoding"
+	"github.com/othon-hugo/go-jwt/pkg/crypto"
+	"github.com/othon-hugo/go-jwt/pkg/encoding"
 )
 
 const (

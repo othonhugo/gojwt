@@ -39,7 +39,7 @@ func Unmarshal(jws string, claims any, secret []byte) error
 
 ## Estrutura `Header`
 
-A estrutura `Header` é utilizada com a função `Marshal()` para definir o cabeçalho do JWT.
+A estrutura `Header` é utilizada com a função `Marshal` para definir o cabeçalho do JWT.
 
 ```go
 type Header struct {
@@ -91,8 +91,8 @@ type UnsupportedTypeError struct{}
 ### Exemplo de Criação e Validação de JWT
 
 ```go
-// Ignora outros imports para melhorar a legibilidade
-import "github.com/othon-hugo/go-jwt/pkg/jwt"
+// Ignora outras dependências para melhorar a legibilidade
+import "github.com/othon-hugo/go-jwt/jwt"
 
 type Claims struct {
 	UserID    string `json:"user_id"`

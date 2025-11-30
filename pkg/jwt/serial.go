@@ -1,7 +1,11 @@
 package jwt
 
-const JWT = "JWT"
+// Marshal generates a JWT from the header, claims, and secret.
+func Marshal(header Header, claims any, secret []byte) (string, error) {
+	return (&token{header: header, payload: payload{claims: claims}}).marshal(secret)
+}
 
+// Unmarshal decodes and validates a JWT.
 func Unmarshal(jws string, claims any, secret []byte) error {
 	t := &token{
 		payload: payload{claims: claims},

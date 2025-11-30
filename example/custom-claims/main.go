@@ -1,4 +1,5 @@
 // Example of custom claims
+// nolint:all // Example code: focus on clarity over style
 package main
 
 import (

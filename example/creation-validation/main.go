@@ -1,4 +1,5 @@
 // Example of token creation and validation.
+// nolint:all // Example code: focus on clarity over style
 package main
 
 import (

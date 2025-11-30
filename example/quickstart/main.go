@@ -1,4 +1,5 @@
 // Quickstart example for gojwt
+// nolint:all // Example code: focus on clarity over style
 package main
 
 import (

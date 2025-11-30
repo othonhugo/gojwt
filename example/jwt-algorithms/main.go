@@ -1,4 +1,5 @@
-// Quickstart example for gojwt
+// Example of JWT algorithms
+// nolint:all // Example code: focus on clarity over style
 package main
 
 import (

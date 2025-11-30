@@ -10,10 +10,12 @@ type b64values struct {
 	header, payload, signature string
 }
 
+// marshal returns the JWT as a string.
 func (v *b64values) marshal() string {
 	return strings.Join([]string{v.header, v.payload, v.signature}, ".")
 }
 
+// unmarshal populates the b64values from a JWT string.
 func (v *b64values) unmarshal(s string) error {
 	fields := strings.SplitN(s, ".", 3)
 	if len(fields) != 3 {
@@ -35,5 +37,5 @@ func encodeJWTBase64(plaintext []byte) string {
 
 // decodeJWTBase64 decodes a base64 string to a byte slice.
 func decodeJWTBase64(encoded string) ([]byte, error) {
-	return base64.RawURLEncoding.DecodeString(encoded)
+	return base64.RawStdEncoding.DecodeString(encoded)
 }

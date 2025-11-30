@@ -1,7 +1,16 @@
 package jwt
 
+// Claimer is an interface for claim validation.
+type Claimer interface {
+	Valid() error
+}
+
 // Marshal generates a JWT from the header, claims, and secret.
 func Marshal(header Header, claims any, secret []byte) (string, error) {
+	if header.Typ == "" {
+		header.Typ = JWT
+	}
+
 	return (&token{header: header, payload: payload{claims: claims}}).marshal(secret)
 }
 
@@ -16,7 +25,13 @@ func Unmarshal(jws string, claims any, secret []byte) error {
 	}
 
 	if t.header.Typ != JWT {
-		return UnsupportedTypeError{t.header.Typ}
+		return unsupportedTypeError{typ: t.header.Typ}
+	}
+
+	if v, ok := claims.(Claimer); ok {
+		if err := v.Valid(); err != nil {
+			return err
+		}
 	}
 
 	return nil

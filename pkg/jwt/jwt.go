@@ -1,12 +1,14 @@
 package jwt
 
 import (
+	"bytes"
 	"crypto/hmac"
 	"crypto/sha256"
 	"crypto/sha512"
 	"encoding/json"
 	"hash"
 	"strings"
+	"time"
 )
 
 // Constants for JWT algorithms and types
@@ -23,20 +25,49 @@ type Header struct {
 	Typ string `json:"typ"`
 }
 
+// claims implements the Claims interface and includes standard JWT claims.
+type claims struct {
+	Issuer    string `json:"iss,omitempty"`
+	Subject   string `json:"sub,omitempty"`
+	Audience  string `json:"aud,omitempty"`
+	ExpiresAt int64  `json:"exp,omitempty"`
+	NotBefore int64  `json:"nbf,omitempty"`
+	IssuedAt  int64  `json:"iat,omitempty"`
+	ID        string `json:"jti,omitempty"`
+}
+
+// Valid validates the claims against the standard JWT rules.
+func (c claims) Valid() error {
+	now := time.Now().Unix()
+
+	if c.ExpiresAt > 0 && now > c.ExpiresAt {
+		return ErrTokenExpired
+	}
+
+	if c.NotBefore > 0 && now < c.NotBefore {
+		return ErrTokenNotValidYet
+	}
+
+	if c.IssuedAt > 0 && now < c.IssuedAt {
+		return ErrTokenUsedBeforeIssued
+	}
+
+	return nil
+}
+
 func (h *Header) marshal() (string, error) {
-	var buf strings.Builder
+	var jsonBuf bytes.Buffer
 
-	enc := json.NewEncoder(&buf)
-	enc.SetEscapeHTML(false)
+	jsonEnc := json.NewEncoder(&jsonBuf)
+	jsonEnc.SetEscapeHTML(false)
 
-	if err := enc.Encode(h); err != nil {
+	if err := jsonEnc.Encode(h); err != nil {
 		return "", err
 	}
 
-	// json.Encoder adds a newline, remove it
-	jsonHeader := strings.TrimSpace(buf.String())
+	jsonHeader := bytes.TrimSpace(jsonBuf.Bytes())
 
-	return encodeJWTBase64([]byte(jsonHeader)), nil
+	return encodeJWTBase64(jsonHeader), nil
 }
 
 func (h *Header) unmarshal(encodedHeader string) error {
@@ -59,7 +90,7 @@ func (h *Header) signer(secret []byte) (hash.Hash, error) {
 		return hmac.New(sha512.New, secret), nil
 	}
 
-	return nil, UnsupportedAlgorithmError{h.Alg}
+	return nil, unsupportedAlgorithmError{alg: h.Alg}
 }
 
 // payload represents the JWT payload (claims)
@@ -68,7 +99,7 @@ type payload struct {
 }
 
 func (p *payload) marshal() (string, error) {
-	var buf strings.Builder
+	var buf bytes.Buffer
 
 	enc := json.NewEncoder(&buf)
 	enc.SetEscapeHTML(false)
@@ -77,9 +108,9 @@ func (p *payload) marshal() (string, error) {
 		return "", err
 	}
 
-	jsonClaims := strings.TrimSpace(buf.String())
+	jsonClaims := bytes.TrimSpace(buf.Bytes())
 
-	return encodeJWTBase64([]byte(jsonClaims)), nil
+	return encodeJWTBase64(jsonClaims), nil
 }
 
 func (p *payload) unmarshal(encodedPayload string) error {

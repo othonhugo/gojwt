@@ -37,5 +37,5 @@ func encodeJWTBase64(plaintext []byte) string {
 
 // decodeJWTBase64 decodes a base64 string to a byte slice.
 func decodeJWTBase64(encoded string) ([]byte, error) {
-	return base64.RawStdEncoding.DecodeString(encoded)
+	return base64.RawURLEncoding.DecodeString(encoded)
 }

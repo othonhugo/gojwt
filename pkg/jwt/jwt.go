@@ -25,8 +25,8 @@ type Header struct {
 	Typ string `json:"typ"`
 }
 
-// claims implements the Claims interface and includes standard JWT claims.
-type claims struct {
+// Claims implements the Claimer interface and includes standard JWT claims.
+type Claims struct {
 	Issuer    string `json:"iss,omitempty"`
 	Subject   string `json:"sub,omitempty"`
 	Audience  string `json:"aud,omitempty"`
@@ -37,10 +37,10 @@ type claims struct {
 }
 
 // Valid validates the claims against the standard JWT rules.
-func (c claims) Valid() error {
+func (c Claims) Valid() error {
 	now := time.Now().Unix()
 
-	if c.ExpiresAt > 0 && now > c.ExpiresAt {
+	if c.ExpiresAt > 0 && now >= c.ExpiresAt {
 		return ErrTokenExpired
 	}
 

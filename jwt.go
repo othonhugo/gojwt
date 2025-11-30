@@ -6,8 +6,8 @@ import (
 
 const (
 	HS256 = jwt.HS256
-	HS384 = jwt.HS256
-	HS512 = jwt.HS256
+	HS384 = jwt.HS384
+	HS512 = jwt.HS512
 )
 
 var (
@@ -16,6 +16,7 @@ var (
 )
 
 type Header = jwt.Header
+type Claims = jwt.Claims
 
 func Marshal(header Header, claims any, secret []byte) (string, error) {
 	return jwt.Marshal(header, claims, secret)

@@ -1,9 +1,6 @@
 package jwt
 
-import (
-	"errors"
-	"fmt"
-)
+import "errors"
 
 var (
 	// ErrInvalidToken is returned when the token is invalid
@@ -28,7 +25,7 @@ type unsupportedAlgorithmError struct {
 }
 
 func (e unsupportedAlgorithmError) Error() string {
-	return fmt.Sprintf("jwt: unsupported algorithm: %s", e.alg)
+	return "jwt: unsupported algorithm: " + e.alg
 }
 
 // unsupportedTypeError indicates the token type is not supported
@@ -37,5 +34,5 @@ type unsupportedTypeError struct {
 }
 
 func (e unsupportedTypeError) Error() string {
-	return fmt.Sprintf("jwt: unsupported type: %s", e.typ)
+	return "jwt: unsupported type: " + e.typ
 }

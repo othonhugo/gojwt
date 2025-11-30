@@ -1,3 +1,4 @@
+// Package jwt implements a JWT (JSON Web Token) encoder and decoder.
 package jwt
 
 import (
@@ -19,6 +20,11 @@ const (
 	JWT   = "JWT"
 )
 
+// Claimer is an interface for claim validation.
+type Claimer interface {
+	Valid() error
+}
+
 // Header represents the JWT header
 type Header struct {
 	Alg string `json:"alg"`
@@ -37,7 +43,7 @@ type Claims struct {
 }
 
 // Valid validates the claims against the standard JWT rules.
-func (c Claims) Valid() error {
+func (c *Claims) Valid() error {
 	now := time.Now().Unix()
 
 	if c.ExpiresAt > 0 && now >= c.ExpiresAt {
@@ -93,7 +99,6 @@ func (h *Header) signer(secret []byte) (hash.Hash, error) {
 	return nil, unsupportedAlgorithmError{alg: h.Alg}
 }
 
-// payload represents the JWT payload (claims)
 type payload struct {
 	claims any
 }
@@ -123,7 +128,6 @@ func (p *payload) unmarshal(encodedPayload string) error {
 	return json.Unmarshal(jsonClaims, p.claims)
 }
 
-// token represents the full JWT
 type token struct {
 	header  Header
 	payload payload
